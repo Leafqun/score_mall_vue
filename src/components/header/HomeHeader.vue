@@ -9,8 +9,12 @@
     >
       <!-- icon -->
       <v-layout row align-center justify-start>
-        <div class="icon" :style="{ width: x < 570 ? '160px' : '360px' }"></div>
-        <div style="font-size: 16px; margin-left: 15px;" v-if="x > 300">
+        <div
+          class="icon"
+          :style="{ width: x < 570 ? '160px' : '360px' }"
+          @click="$router.push('/')"
+        ></div>
+        <div style="font-size: 18px; margin-left: 15px;" v-if="x > 300">
           <a @click="$router.push('/')">积分商城</a>
         </div>
       </v-layout>
@@ -61,7 +65,13 @@
       <v-list class="pa-1">
         <v-list-tile avatar>
           <v-list-tile-avatar>
-            <img src="https://randomuser.me/api/portraits/men/85.jpg" />
+            <img
+              :src="
+                user
+                  ? `${this.$picUrl}/${user.avatar}`
+                  : 'https://randomuser.me/api/portraits/men/85.jpg'
+              "
+            />
           </v-list-tile-avatar>
 
           <v-list-tile-content>
@@ -150,7 +160,7 @@ export default {
   width: 380px;
 }
 .menu-item {
-  font-size: 14px;
+  font-size: 16px;
   margin-right: 10px;
   color: rgba(0, 0, 0, 0.8);
   width: 100px;

@@ -12,14 +12,23 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <OrderList :list="orderList" :total="orderTotal"/>
+            <OrderList
+              :list="orderList"
+              :total="orderTotal"
+              @change="handleOrdersListChange"
+            />
           </v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <AddressList :list="addressList" :total="addressTotal"/>
+            <AddressList
+              @change="handlePageChange"
+              :loading="loading"
+              :list="addressList"
+              :total="addressTotal"
+            />
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -43,25 +52,34 @@ export default {
       orderTotal: 0,
       orderCurrentPgae: 1,
       addressTotal: 0,
-      addressCurrentPage: 1
+      addressCurrentPage: 1,
+      loading: true
     };
   },
   created() {
-    this.getOrderList(1, 10)
+    this.getOrderList(1, 10);
   },
   methods: {
     async getOrderList(currentPage, pageSize) {
-      const { data } = await this.$axios.get(`${this.$orderUrl}/getOrdersListByUserId`, {
-        params: { currentPage, pageSize, userId: this.$store.state.user.id }
-      });
+      const { data } = await this.$axios.get(
+        `${this.$orderUrl}/getOrdersListByUserId`,
+        {
+          params: { currentPage, pageSize, userId: this.$store.state.user.id }
+        }
+      );
       this.orderList = data.page.records;
       this.orderTotal = data.page.total;
     },
     async getAddressList(currentPage, pageSize) {
-      const { data } = await this.$axios.get(`${this.$userUrl}/getAddressListByUserId`, {
-        params: { currentPage, pageSize, userid: this.$store.state.user.id }
-      });
-      this.addressList = data.page.records;
+      this.loading = true;
+      const { data } = await this.$axios.get(
+        `${this.$userUrl}/getAddressListByUserId`,
+        {
+          params: { currentPage, pageSize, userid: this.$store.state.user.id }
+        }
+      );
+      this.loading = false;
+      this.addressList = data.page.records.reverse();
       this.addressTotal = data.page.total;
     },
     handleTabsChange(item) {
@@ -69,6 +87,12 @@ export default {
         this.getAddressList(1, 10);
       }
       this.active = item;
+    },
+    handleOrdersListChange(data) {
+      this.getOrderList(data.currentPage, data.pageSize);
+    },
+    handlePageChange(data) {
+      this.getAddressList(data.currentPage, data.pageSize);
     }
   }
 };

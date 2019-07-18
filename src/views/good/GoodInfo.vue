@@ -5,7 +5,7 @@
     <div :style="{ padding }">
       <!--面包屑-->
       <div>
-        <v-breadcrumbs :items="items" divider=">"></v-breadcrumbs>
+        <v-breadcrumbs :items="bread" divider=">"></v-breadcrumbs>
       </div>
       <!--商品详情 -->
       <div>
@@ -15,7 +15,11 @@
             <!-- 大图 -->
             <div>
               <img
-                src="https://picsum.photos/500/300?image=15"
+                :src="
+                  good.picName
+                    ? `${$picUrl}/${good.picName}.png`
+                    : 'https://picsum.photos/500/300?image=15'
+                "
                 :style="{
                   width: x > 600 ? '350px' : x - 45 + 'px',
                   height: x > 600 ? '400px' : '150px',
@@ -69,7 +73,7 @@
               </v-layout>
             </v-layout>
             <div style="margin-top: 20px">
-              <v-btn color="#ea0404"
+              <v-btn color="#ea0404" @click="submit"
                 ><span style="color: white">购买</span></v-btn
               >
             </div>
@@ -101,7 +105,7 @@ export default {
   data() {
     return {
       items: [
-        { text: "首页", disabled: false, href: "/" },
+        { text: "首页", disabled: false, href: "/score_mall/" },
         { text: "美食酒水", disabled: false, href: "/" },
         { text: "坚果炒货", disabled: false, href: "/" },
         { text: "鲜脆每日坚果 25克*7克", disabled: true, href: "" }
@@ -110,6 +114,7 @@ export default {
         id: 1,
         goodName: "sfs"
       },
+      address: {},
       num: 1
     };
   },
@@ -128,6 +133,14 @@ export default {
       } else {
         return "0 15px";
       }
+    },
+    bread() {
+      const type = this.$route.params.type;
+      return [
+        { text: "首页", disabled: false, href: "/score_mall/" },
+        { text: type, disabled: false, href: "/score_mall/" },
+        { text: this.good.goodName, disabled: true, href: "/" }
+      ];
     }
   },
   methods: {
@@ -136,6 +149,31 @@ export default {
         params: { id: this.$route.params.id }
       });
       this.good = data.good;
+    },
+    submit() {
+      /*如果未登陆则跳转到登陆页面，已经登陆成功则生成订单信息，跳转到订单页面*/
+      const user = this.$store.state.user;
+      if (!user) {
+        this.$router.push({
+          path: "/login",
+          query: {
+            redirect: "/good/" + this.$route.params.type + "/" + this.good.id
+          }
+        });
+      }
+      let order = {};
+      order["good_pic"] = this.good.picName;
+      order["goodName"] = this.good.goodName;
+      order["goodNum"] = this.num;
+      order["goodId"] = this.good.id;
+      order["accountId"] = user.id;
+      order["price"] = this.good.price;
+      order["integral"] = this.good.scorePrice;
+      this.$store.dispatch("setOrder", order);
+      sessionStorage.setItem("order", JSON.stringify(order));
+      this.$router.push(
+        `/good/${this.$route.params.type}/${this.$route.params.id}/order`
+      );
     }
   }
 };

@@ -9,8 +9,10 @@
         <v-toolbar-items>
           <v-text-field
             style="margin-top: 5px; width: 300px;"
-            label="Regular"
+            label="商品类型"
             solo
+            v-model="search"
+            @click:append="$router.push(`list/${search}`)"
             append-icon="search"
           ></v-text-field>
         </v-toolbar-items>
@@ -70,31 +72,20 @@ export default {
     return {
       items: [
         {
-          src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg"
+          src: `${this.$picUrl}/s1.png`
         },
         {
-          src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg"
+          src: `${this.$picUrl}/s2.png`
         },
         {
-          src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg"
+          src: `${this.$picUrl}/s3.png`
         },
         {
-          src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg"
+          src: `${this.$picUrl}/s4.png`
         }
       ],
-      goodList: [
-        { id: 1, goodName: "蚊香", price: "199" },
-        { id: 2, goodName: "糖果", price: "12" },
-        { id: 3, goodName: "苹果", price: "112" },
-        { id: 4, goodName: "梨", price: "9" },
-        { id: 5, goodName: "蚊香", price: "199" },
-        { id: 6, goodName: "糖果", price: "12" },
-        { id: 7, goodName: "苹果", price: "112" },
-        { id: 8, goodName: "梨", price: "9" },
-        { id: 9, goodName: "蚊香", price: "199" },
-        { id: 10, goodName: "糖果", price: "12" }
-      ],
-      list: [],
+      goodList: this.$store.state.list,
+      list: this.$store.state.list,
       typeList: [
         "金融",
         "手机家电",
@@ -107,7 +98,8 @@ export default {
         "其它"
       ],
       isClick: false,
-      userList: []
+      userList: [],
+      search: ""
     };
   },
   created() {
@@ -145,7 +137,12 @@ export default {
         `${this.$goodUrl}/getGoodListByType`,
         { params: { currentPage, pageSize, bigClassify } }
       );
-      this.list[i] = data.page.records;
+      const l = data.page.records;
+      this.list[i] = l;
+      if (i === 10) {
+        this.$store.dispatch("setList", this.list);
+        sessionStorage.setItem("list", JSON.stringify(this.list));
+      }
     },
     async getGoodListByTag1(currentPage, pageSize, bigClassify) {
       const { data } = await this.$axios.get(

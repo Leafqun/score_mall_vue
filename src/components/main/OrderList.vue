@@ -1,23 +1,31 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div style="margin-top: 20px">
     <div v-if="x > 800">
-      <v-card v-for="order in list" :key="order.id" style="margin-bottom: 20px;">
+      <v-card
+        v-for="order in list"
+        :key="order.id"
+        style="margin-bottom: 20px;"
+      >
         <v-layout align-center row fill-height>
           <!-- 商品图片 -->
           <v-flex style="margin-right: 10px">
             <img
-              src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+              :src="
+                order.goodPic
+                  ? `${$picUrl}/${order.goodPic}.png`
+                  : 'https://cdn.vuetifyjs.com/images/cards/desert.jpg'
+              "
               style="width: 100px; height: 100px"
             />
           </v-flex>
 
           <!-- 商品名 -->
-          <v-flex style="margin-right: 10px">
+          <v-flex style="margin-right: 10px; width: 100px">
             {{ order.goodName }}
           </v-flex>
 
           <!-- 下单时间和订单号 -->
-          <v-flex style="margin-right: 10px;">
+          <v-flex style="margin-right: 10px; width: 250px">
             <div>
               <span>下单时间：</span>
               <span>{{ order.createTime }}</span>
@@ -28,23 +36,17 @@
             </div>
           </v-flex>
 
-          <div>
-            <v-divider vertical style="height: 100px" />
-          </div>
-
           <!-- 价格 -->
-          <v-flex style="text-align: center">
-            {{ order.price }}
-          </v-flex>
+          <v-flex style="text-align: center;"> {{ order.price }}积分 </v-flex>
 
           <div>
-            <v-divider vertical style="height: 100px" />
+            <v-divider vertical />
           </div>
 
           <!-- 操作 -->
           <v-flex>
-            <div style="text-align: center">
-              <span>删除</span>
+            <div style="text-align: center;">
+              <a @click="del(order.id)">删除</a>
             </div>
           </v-flex>
         </v-layout>
@@ -81,7 +83,11 @@
             <v-layout align-center justify-start row fill-height>
               <v-flex style="margin-right: 10px">
                 <img
-                  src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+                  :src="
+                    order.goodPic
+                      ? `${$picUrl}/${order.goodPic}.png`
+                      : 'https://cdn.vuetifyjs.com/images/cards/desert.jpg'
+                  "
                   style="width: 50px; height: 50px"
                 />
               </v-flex>
@@ -107,12 +113,26 @@
                 <div>
                   <span>订单号：</span>
                   <span>{{ order.id }}</span>
+                  <span style="margin-left: 10px">
+                    <a><v-icon>delete</v-icon></a>
+                  </span>
                 </div>
               </div>
             </v-card-text>
           </v-card>
         </v-expansion-panel-content>
       </v-expansion-panel>
+    </div>
+
+    <!-- 分页 -->
+    <div style="margin-top: 15px;" v-if="total > pageSize">
+      <v-pagination
+        v-model="currentPage"
+        :length="Math.floor(total / pageSize) + 1"
+        circle
+        color="blue"
+        @input="handlePageChange"
+      ></v-pagination>
     </div>
   </div>
 </template>
@@ -168,14 +188,7 @@ export default {
         { text: "价格", value: "fat", sortable: false },
         { text: "操作", value: "carbs", sortable: false, align: "center" }
       ],
-      desserts: [
-        {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          isDefault: true
-        }
-      ]
+      pageSize: 10
     };
   },
   props: {
@@ -186,8 +199,41 @@ export default {
     x() {
       return this.$store.state.windowSize.x;
     }
+  },
+  methods: {
+    handlePageChange(page) {
+      this.currentPage = page;
+      this.$emit("change", {
+        currentPage: this.currentPage,
+        pageSize: this.pageSize
+      });
+    },
+    del(id) {
+      this.delete(id);
+    },
+    async delete(id) {
+      const { data } = await this.$axios.get(
+        `${this.$orderUrl}/deleteOrdersById`,
+        {
+          params: { id }
+        }
+      );
+      if (data.msg === "success") {
+        this.$emit("change", {
+          currentPage: this.currentPage,
+          pageSize: this.pageSize
+        });
+      }
+    }
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+a {
+}
+a:hover {
+  cursor: pointer;
+  color: #ea0404;
+}
+</style>

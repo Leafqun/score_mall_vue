@@ -17,22 +17,26 @@
       }"
     >
       <v-card ref="form" :width="width" style="height: 400px">
-        <v-card-text>
-          <div style="text-align: right">
-            <v-icon
-              :color="hover ? 'red' : 'black'"
-              @mouseover="hover = true"
-              @mouseout="hover = false"
-              >fas fa-qrcode</v-icon
-            >
-          </div>
+        <div style="text-align: right; margin-right: 5px; margin-top: 5px;">
+          <v-icon
+            @click="show = !show"
+            :color="hover ? 'red' : 'black'"
+            @mouseover="hover = true"
+            @mouseout="hover = false"
+            >fas fa-qrcode</v-icon
+          >
+        </div>
+        <div v-if="show" style="text-align: center; padding-top: 30px">
+          <QRCode />
+        </div>
+        <v-card-text v-if="!show">
           <v-text-field
             ref="username"
             v-model="username"
             :rules="[() => !!username || '用户名不能为空']"
             :error-messages="userError"
             label="username/phone"
-            placeholder="用户名/手机号"
+            placeholder="卡号/手机号/身份证号"
             prepend-inner-icon="person"
             required
           ></v-text-field>
@@ -65,8 +69,8 @@
             <Code @handleCodeChange="handleCodeChange" />
           </div>
         </v-card-text>
-        <v-divider class="mt-5"></v-divider>
-        <v-card-actions>
+        <v-divider class="mt-5" v-if="!show"></v-divider>
+        <v-card-actions v-if="!show">
           <div style="text-align: center; width: 100%">
             <v-btn color="primary" flat @click="submit">登录</v-btn>
           </div>
@@ -80,19 +84,21 @@
 <script>
 import HomeFooter from "../components/footer/HomeFooter";
 import Code from "../components/verification/Code";
+import QRCode from "../components/main/QRCode";
 export default {
   name: "login",
-  components: { Code, HomeFooter },
+  components: { QRCode, Code, HomeFooter },
   data() {
     return {
-      username: "Leafqun",
+      username: "15753421245",
       password: "123456",
       code: "",
       identifyCode: "",
       userError: "",
       passError: "",
       codeError: "",
-      hover: false
+      hover: false,
+      show: false
     };
   },
   computed: {
@@ -124,7 +130,7 @@ export default {
   methods: {
     async submit() {
       if (this.code !== this.identifyCode) {
-        this.error = "验证码错误";
+        this.codeError = "验证码错误";
         return false;
       }
       const { data } = await this.$axios.get(`${this.$userUrl}/login`, {

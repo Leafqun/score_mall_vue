@@ -17,6 +17,11 @@ const router = new Router({
       component: Home
     },
     {
+      path: "/test",
+      name: "test",
+      component: import("./views/Test.vue")
+    },
+    {
       path: "/about",
       name: "about",
       // route level code-splitting
@@ -37,19 +42,33 @@ const router = new Router({
         {
           path: "info",
           name: "info",
+          meta: {
+            info: "我的账号"
+          },
           component: () => import("./views/personal/PersonalInfo.vue")
         },
         {
           path: "material",
           name: "material",
+          meta: {
+            info: "我的资料"
+          },
           component: () => import("./views/personal/Material.vue")
         },
         {
           path: "prime",
           name: "prime",
+          meta: {
+            info: "我的VIP"
+          },
           component: () => import("./views/personal/Prime.vue")
         }
       ]
+    },
+    {
+      path: "/list/:type",
+      name: "goodList",
+      component: () => import("./views/good/GoodList.vue")
     },
     {
       path: "/login",
@@ -57,12 +76,12 @@ const router = new Router({
       component: () => import("./views/Login.vue")
     },
     {
-      path: "/good/:id",
+      path: "/good/:type/:id",
       name: "goodInfo",
       component: () => import("./views/good/GoodInfo.vue")
     },
     {
-      path: "/good/:id/order",
+      path: "/good/:type/:id/order",
       name: "order",
       meta: {
         requireAuth: true
@@ -70,7 +89,7 @@ const router = new Router({
       component: () => import("./views/good/Order.vue")
     },
     {
-      path: "/good/:id/order/success",
+      path: "/good/:type/:id/order/success",
       name: "success",
       meta: {
         requireAuth: true

@@ -12,7 +12,13 @@ export default new Vuex.Store({
     scrollTop: 0,
     user: sessionStorage.getItem("user")
       ? JSON.parse(sessionStorage.getItem("user"))
-      : null
+      : null,
+    order: sessionStorage.getItem("order")
+      ? JSON.parse(sessionStorage.getItem("order"))
+      : {},
+    list: sessionStorage.getItem("list")
+      ? JSON.parse(sessionStorage.getItem("list"))
+      : []
   },
   mutations: {
     setWindowSize(state, windowSize) {
@@ -23,6 +29,12 @@ export default new Vuex.Store({
     },
     setUser(state, user) {
       state.user = user;
+    },
+    setOrder(state, order) {
+      state.order = order;
+    },
+    setList(state, list) {
+      state.list = list;
     }
   },
   actions: {
@@ -34,6 +46,12 @@ export default new Vuex.Store({
     },
     setUser({ commit }, user) {
       commit("setUser", user);
+    },
+    setOrder({ commit }, order) {
+      commit("setOrder", order);
+    },
+    setList({ commit }, list) {
+      commit("setList", list);
     }
   }
 });

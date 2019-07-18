@@ -2,7 +2,7 @@
   <div>
     <!-- 标题 -->
     <div style="font-size: 24px; color: #333; margin-top: 15px;">
-      {{ title }}
+      <a @click="$router.push(`/list/${title}`)">{{ title }}</a>
     </div>
 
     <v-divider style="margin: 15px 0 0 0" />
@@ -18,11 +18,8 @@
         style="width: 150px; border-right: 1px solid rgba(0, 0, 0, 0.2);background-color: #F2F4F3"
         shrink
       >
-        <div>
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-            height="200px"
-          ></v-img>
+        <div @click="$router.push(`/list/${title}`)">
+          <v-img :src="`${$picUrl}/${title}.jpg`" height="200px"></v-img>
         </div>
         <div style="margin-top: 15px;">
           <div
@@ -45,11 +42,11 @@
       <v-flex>
         <v-layout column style="height: 100%">
           <v-flex>
-            <CardList :list="list.slice(0, 5)" />
+            <CardList :list="list.slice(0, 5)" :title="title" />
           </v-flex>
 
           <v-flex>
-            <CardList :list="list.slice(5)" />
+            <CardList :list="list.slice(5)" :title="title" />
           </v-flex>
         </v-layout>
       </v-flex>
@@ -58,11 +55,11 @@
     <div style="margin-top: 15px;" v-else>
       <v-layout column style="height: 100%">
         <v-flex>
-          <CardList :list="list.slice(0, 2)" />
+          <CardList :list="list.slice(0, 2)" :title="title" />
         </v-flex>
 
         <v-flex>
-          <CardList :list="list.slice(2, 4)" />
+          <CardList :list="list.slice(2, 4)" :title="title" />
         </v-flex>
       </v-layout>
     </div>

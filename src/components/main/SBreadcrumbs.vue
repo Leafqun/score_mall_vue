@@ -10,13 +10,18 @@
     <div style="margin: 0 10px; height: 30px">
       <v-divider vertical />
     </div>
-    <div>我的账户</div>
+    <div>{{ which }}</div>
   </v-layout>
 </template>
 
 <script>
 export default {
-  name: "SBreadcrumbs"
+  name: "SBreadcrumbs",
+  computed: {
+    which() {
+      return this.$route.meta.info;
+    }
+  }
 };
 </script>
 

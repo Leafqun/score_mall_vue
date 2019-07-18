@@ -31,13 +31,19 @@
             </v-flex>
             <v-flex>
               <div class="line">
-                <div>余额</div>
+                <div>
+                  <span v-if="card.type === 2">额度</span>
+                  <span v-else>余额</span>
+                </div>
                 <div style="margin-top: 15px">{{ card.money }}</div>
               </div>
             </v-flex>
             <v-flex>
               <div class="line">
-                <div>可用余额</div>
+                <div>
+                  <span v-if="card.type === 2">可用额度</span>
+                  <span v-else>可用余额</span>
+                </div>
                 <div style="margin-top: 15px">{{ card.availableMoney }}</div>
               </div>
             </v-flex>
@@ -83,13 +89,19 @@
                   </v-flex>
                   <v-flex>
                     <div class="line">
-                      <div>余额</div>
+                      <div>
+                        <span v-if="card.type === 2">额度</span>
+                        <span v-else>余额</span>
+                      </div>
                       <div style="margin-top: 15px">{{ card.money }}</div>
                     </div>
                   </v-flex>
                   <v-flex>
                     <div class="line">
-                      <div>可用余额</div>
+                      <div>
+                        <span v-if="card.type === 2">可用额度</span>
+                        <span v-else>可用余额</span>
+                      </div>
                       <div style="margin-top: 15px">
                         {{ card.availableMoney }}
                       </div>
@@ -118,9 +130,9 @@ export default {
   },
   methods: {
     getType(type) {
-      if (type === 0) {
+      if (type === 1) {
         return "浙商银行借记卡";
-      } else if (type === 1) {
+      } else if (type === 2) {
         return "浙商银行信用卡";
       }
     },
