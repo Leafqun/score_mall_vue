@@ -28,7 +28,7 @@
           <v-flex style="margin-right: 10px; width: 250px">
             <div>
               <span>下单时间：</span>
-              <span>{{ order.createTime }}</span>
+              <span>{{ order.createTime | dateFilter}}</span>
             </div>
             <div>
               <span>订单号：</span>
@@ -37,7 +37,7 @@
           </v-flex>
 
           <!-- 价格 -->
-          <v-flex style="text-align: center;"> {{ order.price }}积分 </v-flex>
+          <v-flex style="text-align: center;"> {{ order.integral }}积分 </v-flex>
 
           <div>
             <v-divider vertical />
@@ -98,7 +98,7 @@
               </v-flex>
               <!-- 价格 -->
               <v-flex style="text-align: center">
-                {{ order.price }}
+                {{ order.integral }}
               </v-flex>
             </v-layout>
           </template>
@@ -108,7 +108,7 @@
               <div style="margin-right: 10px;">
                 <div>
                   <span>下单时间：</span>
-                  <span>{{ order.createTime }}</span>
+                  <span>{{ order.createTime | dateFilter }}</span>
                 </div>
                 <div>
                   <span>订单号：</span>
@@ -200,6 +200,13 @@ export default {
       return this.$store.state.windowSize.x;
     }
   },
+  filters: {
+    dateFilter(date) {
+      let num = date.substring(11, 13);
+      let n = parseInt(num) + 13;
+      return date.substring(0, 11) + n + date.substring(13);
+    }
+  },
   methods: {
     handlePageChange(page) {
       this.currentPage = page;
@@ -207,6 +214,11 @@ export default {
         currentPage: this.currentPage,
         pageSize: this.pageSize
       });
+    },
+    getDate(date) {
+      let num = date.substring(11, 13);
+      let n = parseInt(num) + 13;
+      return date.substring(0, 11) + n + date.substring(13);
     },
     del(id) {
       this.delete(id);
